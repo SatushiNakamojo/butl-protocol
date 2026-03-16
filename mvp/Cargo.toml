@@ -1,0 +1,15 @@
+[package]
+name = "butl-mvp"
+version = "1.2.0"
+edition = "2021"
+description = "BUTL Protocol MVP — proves all 8 protocol claims"
+license = "MIT OR Apache-2.0"
+
+[dependencies]
+secp256k1 = { version = "0.29", features = ["global-context", "rand-std"] }
+sha2 = "0.10"
+ripemd = "0.1"
+aes-gcm = "0.10"
+rand = "0.8"
+bs58 = { version = "0.5", features = ["check"] }
+hex = "0.4"
