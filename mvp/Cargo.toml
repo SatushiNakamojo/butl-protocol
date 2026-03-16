@@ -2,7 +2,7 @@
 name = "butl-mvp"
 version = "1.2.0"
 edition = "2021"
-description = "BUTL Protocol MVP — proves all 8 protocol claims"
+description = "BUTL Protocol MVP - proves all 8 protocol claims"
 license = "MIT OR Apache-2.0"
 
 [dependencies]
