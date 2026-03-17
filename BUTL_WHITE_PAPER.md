@@ -1,6 +1,8 @@
-# Bitcoin Universal Trust Layer: A Peer-to-Peer Cryptographic Trust Protocol
+# Bitcoin Universal Trust Layer (BUTL): A Peer-to-Peer Cryptographic Trust Protocol
 
 **Satushi Nakamojo**
+
+  *created with Claude(Anthropic) - with additional assistance from Grok(xAI), and ChatGPT(OpenAI)
 
 **satushinakamojo@protonmail.com**
 
