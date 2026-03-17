@@ -224,8 +224,7 @@ butl-protocol/
 │   └── INTEGRATION_EXAMPLES.md
 │
 ├── legal/                             Legal protections
-│   ├── DEFENSIVE-PATENT-PLEDGE.md
-│   └── GITHUB_GUIDE.md
+│   └── DEFENSIVE-PATENT-PLEDGE.md
 │
 └── ai/                                AI context transfer
     ├── AI_BRIEFING_DOCUMENT.md
