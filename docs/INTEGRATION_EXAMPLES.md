@@ -6,7 +6,7 @@ Copy-paste examples showing how to integrate BUTL into passwordless login, authe
 
 All examples use the Python reference implementation (`butl_v12.py`). The same patterns apply to the Rust implementation with equivalent API calls.
 
------
+---
 
 ## 1. Passwordless Website Login
 
@@ -92,7 +92,7 @@ if report.gate_passed:
             if challenge["expires"] > time.time():
                 user_address = header.sender
                 print(f"Authenticated: {user_address}")
-                # Create session for user_address — no password needed
+                # Create session for user_address - no password needed
             else:
                 print("Challenge expired")
         else:
@@ -106,15 +106,15 @@ else:
 ### What the User Experiences
 
 1. Visit `https://example.com/login`
-1. Browser extension (BUTL-Login) detects the challenge
-1. User clicks “Sign In with BUTL”
-1. Authenticated. No password typed. No email entered. No 2FA code.
+2. Browser extension (BUTL-Login) detects the challenge
+3. User clicks "Sign In with BUTL"
+4. Authenticated. No password typed. No email entered. No 2FA code.
 
------
+---
 
 ## 2. Authenticated Email (SMTP with BUTL Headers)
 
-Add BUTL verification to email without changing the email protocol. BUTL fields ride as X-headers. The encrypted body is a MIME attachment. The recipient’s email client verifies before rendering.
+Add BUTL verification to email without changing the email protocol. BUTL fields ride as X-headers. The encrypted body is a MIME attachment. The recipient's email client verifies before rendering.
 
 ### Sender Side (Compose and Sign)
 
@@ -211,21 +211,21 @@ if report.gate_passed:
     if report.fully_verified:
         print(f"Verified sender: {header.sender}")
         print(f"Message: {plaintext.decode('utf-8')}")
-        # Safe to render — verified and decrypted
+        # Safe to render - verified and decrypted
     else:
-        print("Payload verification failed — do not render")
+        print("Payload verification failed - do not render")
 else:
-    print("BUTL verification failed — possible phishing")
+    print("BUTL verification failed - possible phishing")
     # Do not render the email. Do not download attachments.
 ```
 
 ### What This Prevents
 
-- **Phishing:** A forged email claiming to be from `alice@example.com` will fail BUTL signature verification because the attacker doesn’t have Alice’s private key.
-- **Tampering:** If the email body is modified in transit, the payload hash won’t match.
-- **Impersonation:** The sender’s Bitcoin address is cryptographically bound to the signature. No one can impersonate Alice without her private key.
+- **Phishing:** A forged email claiming to be from `alice@example.com` will fail BUTL signature verification because the attacker doesn't have Alice's private key.
+- **Tampering:** If the email body is modified in transit, the payload hash won't match.
+- **Impersonation:** The sender's Bitcoin address is cryptographically bound to the signature. No one can impersonate Alice without her private key.
 
------
+---
 
 ## 3. REST API Authentication
 
@@ -283,10 +283,10 @@ server = BUTLKeypair(sha256(b"api-server-seed"))
 gate = BUTLGate(
     server,
     pos_config=ProofOfSatoshiConfig(enabled=True, min_satoshis=10000),
-    freshness_window=6,  # ~1 hour — tight for API security
+    freshness_window=6,  # ~1 hour - tight for API security
 )
 
-# Authorized clients (address → permissions)
+# Authorized clients (address -> permissions)
 authorized = {
     "1ClientAddress...": ["transfer", "balance", "history"],
 }
@@ -342,22 +342,22 @@ def handle_transaction():
 
 ### Why This Is Better Than API Keys
 
-|Property                |API Keys                         |BUTL Authentication                |
-|------------------------|---------------------------------|-----------------------------------|
-|Stolen key = full access|Yes                              |No (key is never transmitted)      |
-|Man-in-the-middle       |Possible (if key intercepted)    |Impossible (ECDSA signature)       |
-|Replay attack           |Possible (key reuse)             |Blocked (block height freshness)   |
-|Request tampering       |Undetected                       |Detected (signature covers headers)|
-|Payload encryption      |Separate (TLS only)              |Built-in (ECDH + AES-GCM)          |
-|Payload integrity       |None                             |SHA-256 hash + GCM tag             |
-|Identity verification   |Shared secret                    |Cryptographic proof                |
-|Revocation              |Change key (all clients affected)|Per-client (address-based)         |
+| Property | API Keys | BUTL Authentication |
+|----------|----------|-------------------|
+| Stolen key = full access | Yes | No (key is never transmitted) |
+| Man-in-the-middle | Possible (if key intercepted) | Impossible (ECDSA signature) |
+| Replay attack | Possible (key reuse) | Blocked (block height freshness) |
+| Request tampering | Undetected | Detected (signature covers headers) |
+| Payload encryption | Separate (TLS only) | Built-in (ECDH + AES-GCM) |
+| Payload integrity | None | SHA-256 hash + GCM tag |
+| Identity verification | Shared secret | Cryptographic proof |
+| Revocation | Change key (all clients affected) | Per-client (address-based) |
 
------
+---
 
 ## 4. IoT Device Authentication
 
-Every IoT device gets a BUTL identity. Device-to-server and device-to-device communication is signed, encrypted, and verified. Firmware updates are BUTL-signed — the device verifies before installing.
+Every IoT device gets a BUTL identity. Device-to-server and device-to-device communication is signed, encrypted, and verified. Firmware updates are BUTL-signed - the device verifies before installing.
 
 ### Device Side (Register and Authenticate)
 
@@ -408,7 +408,7 @@ reading = json.dumps({
     "battery_pct": 87,
 }).encode("utf-8")
 
-# Sign and encrypt — uses next address in chain (automatic key rotation)
+# Sign and encrypt - uses next address in chain (automatic key rotation)
 msg = signer.sign_and_encrypt(
     body=reading,
     receiver_pubkey=server_pubkey,
@@ -435,7 +435,7 @@ gate = BUTLGate(
 )
 
 # Track registered devices
-devices = {}  # thread_id → {serial, last_pubkey, last_seq}
+devices = {}  # thread_id -> {serial, last_pubkey, last_seq}
 
 def handle_device_message(header_json, encrypted_payload):
     header = BUTLHeader.from_json(header_json)
@@ -476,7 +476,7 @@ def verify_firmware_update(header, firmware_binary):
     report = gate.check_header(header)
 
     if not report.gate_passed:
-        print("Firmware update REJECTED — signature verification failed")
+        print("Firmware update REJECTED - signature verification failed")
         print("Keeping current firmware.")
         return False
 
@@ -487,15 +487,15 @@ def verify_firmware_update(header, firmware_binary):
         # Safe to install
         return True
     else:
-        print("Firmware update REJECTED — payload tampering detected")
+        print("Firmware update REJECTED - payload tampering detected")
         return False
 ```
 
------
+---
 
 ## 5. Encrypted File Transfer
 
-Send files with end-to-end encryption and verify-before-download protection. The recipient verifies the sender’s identity and the file’s integrity before the file touches their disk.
+Send files with end-to-end encryption and verify-before-download protection. The recipient verifies the sender's identity and the file's integrity before the file touches their disk.
 
 ### Sender Side
 
@@ -551,7 +551,7 @@ else:
     report = gate.check_header(header)
 
     if report.gate_passed:
-        print(f"Gate OPEN — downloading file from verified sender: {header.sender}")
+        print(f"Gate OPEN - downloading file from verified sender: {header.sender}")
         # Phase 2: Download the encrypted payload
         # encrypted_payload = transport.receive_payload()
 
@@ -560,17 +560,17 @@ else:
         )
 
         if report.fully_verified:
-            # Safe to save — sender verified, file integrity confirmed
+            # Safe to save - sender verified, file integrity confirmed
             output_path = "quarterly_report_received.pdf"
             with open(output_path, "wb") as f:
                 f.write(plaintext)
             print(f"File saved: {output_path} ({len(plaintext)} bytes)")
             print(f"Verified from: {header.sender}")
         else:
-            print("File verification failed — not saved")
+            print("File verification failed - not saved")
             # plaintext is already None, nothing to save
     else:
-        print("Gate CLOSED — file rejected before download")
+        print("Gate CLOSED - file rejected before download")
         print(f"Reason: {report.errors}")
         # Phase 2 never happens. The file never touches the disk.
 ```
@@ -582,7 +582,7 @@ else:
 - **Tampering:** If the file is modified in transit, the payload hash check (Step 7) or GCM authentication (Step 8) catches it.
 - **Resource exhaustion:** The `BUTL-PayloadSize` field lets the recipient reject oversized files before downloading.
 
------
+---
 
 ## 6. Document Signing with Timestamp
 
@@ -688,7 +688,7 @@ else:
     print("FAILED: Signature is invalid")
 ```
 
------
+---
 
 ## Integration Pattern Summary
 
@@ -708,6 +708,6 @@ SENDER                                  RECEIVER
 
 The body can be a chat message, an email, an API request, a sensor reading, a firmware binary, a file, or a signed document. The pattern is the same. The verification is the same. The trust is the same.
 
------
+---
 
 *Six use cases. One protocol. Same pattern everywhere. Adapt these examples to your application.*
