@@ -2,9 +2,9 @@
 name = "butl"
 version = "1.2.0"
 edition = "2021"
-description = "Bitcoin Universal Trust Layer — reference implementation"
+description = "Bitcoin Universal Trust Layer - reference implementation"
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/satushinakamojo/butl-protocol"
+repository = "https://github.com/[username]/butl-protocol"
 readme = "README.md"
 keywords = ["bitcoin", "cryptography", "trust", "identity", "encryption"]
 categories = ["cryptography", "authentication"]

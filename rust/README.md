@@ -1,10 +1,10 @@
 # BUTL Rust Reference Implementation
 
-## `butl_v12.rs` — Complete Library for Building BUTL Applications in Rust
+## `butl_v12.rs` - Complete Library for Building BUTL Applications in Rust
 
 *From installing to sending your first BUTL-encrypted message in under 15 minutes.*
 
------
+---
 
 ## What This Is
 
@@ -19,15 +19,15 @@
 - Proof of Satoshi (optional balance check, receiver-configurable toggle + slider)
 - Pubkey-to-address consistency check
 
-The implementation uses production-quality crates from the Rust ecosystem. All cryptographic operations use `secp256k1` (bindings to libsecp256k1, the same C library used by Bitcoin Core), `aes-gcm` (AEAD encryption), and `sha2` (SHA-256). There is no stub mode — this is real cryptography from the start.
+The implementation uses production-quality crates from the Rust ecosystem. All cryptographic operations use `secp256k1` (bindings to libsecp256k1, the same C library used by Bitcoin Core), `aes-gcm` (AEAD encryption), and `sha2` (SHA-256). There is no stub mode - this is real cryptography from the start.
 
------
+---
 
 ## Quick Start
 
 ### Step 1: Install Rust
 
-If you don’t have Rust installed:
+If you don't have Rust installed:
 
 ```bash
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
@@ -72,18 +72,18 @@ bs58 = { version = "0.5", features = ["check"] }
 hex = "0.4"
 ```
 
-|Crate       |License          |What It Does                                                                            |
-|------------|-----------------|----------------------------------------------------------------------------------------|
-|`secp256k1` |CC0-1.0          |Keypair generation, ECDSA signing/verification, ECDH (wraps Bitcoin Core’s libsecp256k1)|
-|`sha2`      |MIT OR Apache-2.0|SHA-256 hashing                                                                         |
-|`ripemd`    |MIT OR Apache-2.0|RIPEMD-160 for Bitcoin address derivation                                               |
-|`aes-gcm`   |MIT OR Apache-2.0|AES-256-GCM authenticated encryption                                                    |
-|`base64`    |MIT OR Apache-2.0|Base64 encoding for signatures and chain proofs                                         |
-|`rand`      |MIT OR Apache-2.0|Cryptographic random number generation                                                  |
-|`serde`     |MIT OR Apache-2.0|Serialization framework                                                                 |
-|`serde_json`|MIT OR Apache-2.0|JSON serialization for headers                                                          |
-|`bs58`      |MIT OR Apache-2.0|Base58 encoding for Bitcoin addresses                                                   |
-|`hex`       |MIT OR Apache-2.0|Hexadecimal encoding for public keys and hashes                                         |
+| Crate | License | What It Does |
+|-------|---------|--------------|
+| `secp256k1` | CC0-1.0 | Keypair generation, ECDSA signing/verification, ECDH (wraps Bitcoin Core's libsecp256k1) |
+| `sha2` | MIT OR Apache-2.0 | SHA-256 hashing |
+| `ripemd` | MIT OR Apache-2.0 | RIPEMD-160 for Bitcoin address derivation |
+| `aes-gcm` | MIT OR Apache-2.0 | AES-256-GCM authenticated encryption |
+| `base64` | MIT OR Apache-2.0 | Base64 encoding for signatures and chain proofs |
+| `rand` | MIT OR Apache-2.0 | Cryptographic random number generation |
+| `serde` | MIT OR Apache-2.0 | Serialization framework |
+| `serde_json` | MIT OR Apache-2.0 | JSON serialization for headers |
+| `bs58` | MIT OR Apache-2.0 | Base58 encoding for Bitcoin addresses |
+| `hex` | MIT OR Apache-2.0 | Hexadecimal encoding for public keys and hashes |
 
 ### Step 4: Copy the Source
 
@@ -99,7 +99,7 @@ The first build downloads and compiles all dependencies (takes 1-2 minutes). Sub
 
 The demo runs five scenarios: genesis message, chained message, tampered payload detection, wrong receiver rejection, and Proof of Satoshi. Every step prints its verification status.
 
------
+---
 
 ## Using the Library
 
@@ -111,7 +111,7 @@ use butl::{BUTLKeypair, sha256};
 // Generate a random identity
 let me = BUTLKeypair::generate().unwrap();
 
-// Or from a specific seed (deterministic — same seed = same identity)
+// Or from a specific seed (deterministic - same seed = same identity)
 let me = BUTLKeypair::from_secret(&sha256(b"my-secret-seed")).unwrap();
 
 // Your identity
@@ -163,8 +163,8 @@ let msg = signer.sign_and_encrypt(
     rx_addr,
 ).unwrap();
 
-// msg.header             — BUTL header (cleartext, for Phase 1)
-// msg.encrypted_payload  — encrypted body (for Phase 2)
+// msg.header             - BUTL header (cleartext, for Phase 1)
+// msg.encrypted_payload  - encrypted body (for Phase 2)
 ```
 
 ### Receive and Verify a Message
@@ -196,7 +196,7 @@ if report.gate_passed() {
         }
     }
 } else {
-    println!("Gate CLOSED — message rejected");
+    println!("Gate CLOSED - message rejected");
     println!("{}", report.summary());
 }
 ```
@@ -215,7 +215,7 @@ let pt1 = gate.accept_payload(&msg1.header, &msg1.encrypted_payload, &mut r1);
 // Sender sends message 2 (chained)
 let msg2 = signer.sign_and_encrypt(body2, &rx_pubkey, rx_addr).unwrap();
 
-// Receiver verifies message 2 — passes previous sender's pubkey
+// Receiver verifies message 2 - passes previous sender's pubkey
 let mut r2 = gate.check_header(&msg2.header, Some(&s1pk));
 let pt2 = gate.accept_payload(&msg2.header, &msg2.encrypted_payload, &mut r2);
 ```
@@ -227,26 +227,26 @@ The `prev_pk` parameter tells the gate which public key to verify the chain proo
 ```rust
 use butl::ProofOfSatoshiConfig;
 
-// Disabled (default) — pure math, no blockchain query
+// Disabled (default) - pure math, no blockchain query
 let gate_no_pos = BUTLGate::new(
     receiver.clone(), StubBlockchain, 144,
     ProofOfSatoshiConfig { enabled: false, min_satoshis: 1 },
 );
 
-// Enabled with threshold — sender must hold ≥ 10,000 satoshis
+// Enabled with threshold - sender must hold >= 10,000 satoshis
 let gate_with_pos = BUTLGate::new(
     receiver.clone(), StubBlockchain, 144,
     ProofOfSatoshiConfig { enabled: true, min_satoshis: 10_000 },
 );
 
-// Enabled with high threshold — enterprise use
+// Enabled with high threshold - enterprise use
 let gate_enterprise = BUTLGate::new(
     receiver.clone(), StubBlockchain, 144,
     ProofOfSatoshiConfig { enabled: true, min_satoshis: 100_000 },
 );
 ```
 
-When disabled, Step 5 is skipped. The protocol operates as pure math with zero external dependencies. When enabled, Step 5 queries the blockchain to verify the sender’s balance.
+When disabled, Step 5 is skipped. The protocol operates as pure math with zero external dependencies. When enabled, Step 5 queries the blockchain to verify the sender's balance.
 
 ### Header Serialization
 
@@ -352,77 +352,77 @@ let mut signer = BUTLSigner::new(keychain, blockchain);
 
 This example uses `reqwest` (add `reqwest = { version = "0.11", features = ["blocking", "json"] }` to Cargo.toml). For async applications, use `reqwest` without the `blocking` feature.
 
------
+---
 
 ## API Reference
 
 ### Types
 
-|Type                  |Purpose                                                                                 |
-|----------------------|----------------------------------------------------------------------------------------|
-|`BUTLKeypair`         |Single secp256k1 keypair. Identity, signing, ECDH, address derivation.                  |
-|`BUTLKeychain`        |Deterministic key sequence from master seed. Address chaining.                          |
-|`BUTLSigner<B>`       |Sender-side: sign, encrypt, package. Generic over `BlockchainProvider`.                 |
-|`BUTLGate<B>`         |Receiver-side: 8-step verify-before-download gate. Generic over `BlockchainProvider`.   |
-|`BUTLHeader`          |Protocol header. Serde `Serialize` + `Deserialize`. Canonical payload. Text/JSON output.|
-|`BUTLMessage`         |Header + encrypted payload. The complete transmissible unit.                            |
-|`ProofOfSatoshiConfig`|Toggle + slider for balance check. Receiver configuration.                              |
-|`BlockchainProvider`  |Trait: 4 methods for Bitcoin blockchain queries.                                        |
-|`StubBlockchain`      |Dev/test stub returning hardcoded values.                                               |
-|`GateReport`          |Detailed results of all 8 verification steps with `summary()`.                          |
-|`CheckResult`         |Enum: `Pass`, `Fail`, `Skip`. Implements `Display`.                                     |
-|`BUTLError`           |Error enum: 6 variants covering all failure modes.                                      |
+| Type | Purpose |
+|------|---------|
+| `BUTLKeypair` | Single secp256k1 keypair. Identity, signing, ECDH, address derivation. |
+| `BUTLKeychain` | Deterministic key sequence from master seed. Address chaining. |
+| `BUTLSigner<B>` | Sender-side: sign, encrypt, package. Generic over `BlockchainProvider`. |
+| `BUTLGate<B>` | Receiver-side: 8-step verify-before-download gate. Generic over `BlockchainProvider`. |
+| `BUTLHeader` | Protocol header. Serde `Serialize` + `Deserialize`. Canonical payload. Text/JSON output. |
+| `BUTLMessage` | Header + encrypted payload. The complete transmissible unit. |
+| `ProofOfSatoshiConfig` | Toggle + slider for balance check. Receiver configuration. |
+| `BlockchainProvider` | Trait: 4 methods for Bitcoin blockchain queries. |
+| `StubBlockchain` | Dev/test stub returning hardcoded values. |
+| `GateReport` | Detailed results of all 8 verification steps with `summary()`. |
+| `CheckResult` | Enum: `Pass`, `Fail`, `Skip`. Implements `Display`. |
+| `BUTLError` | Error enum: 6 variants covering all failure modes. |
 
 ### BUTLKeypair Methods
 
-|Method             |Signature                                   |Description                                    |
-|-------------------|--------------------------------------------|-----------------------------------------------|
-|`from_secret`      |`(bytes: &[u8; 32]) → Result<Self>`         |Create from 32-byte private key (deterministic)|
-|`generate`         |`() → Result<Self>`                         |Create with random private key                 |
-|`public_key_bytes` |`(&self) → [u8; 33]`                        |Compressed public key as 33 bytes              |
-|`private_key_bytes`|`(&self) → [u8; 32]`                        |Private key as 32 bytes (NEVER log or transmit)|
-|`sign`             |`(&self, hash: &[u8; 32]) → Result<Vec<u8>>`|ECDSA sign. Returns DER-encoded signature.     |
-|`verify`           |`(pubkey, sig, hash) → Result<bool>`        |Static. Verify ECDSA signature.                |
-|`ecdh`             |`(&self, other: &[u8]) → Result<[u8; 32]>`  |Compute ECDH shared secret                     |
+| Method | Signature | Description |
+|--------|-----------|-------------|
+| `from_secret` | `(bytes: &[u8; 32]) -> Result<Self>` | Create from 32-byte private key (deterministic) |
+| `generate` | `() -> Result<Self>` | Create with random private key |
+| `public_key_bytes` | `(&self) -> [u8; 33]` | Compressed public key as 33 bytes |
+| `private_key_bytes` | `(&self) -> [u8; 32]` | Private key as 32 bytes (NEVER log or transmit) |
+| `sign` | `(&self, hash: &[u8; 32]) -> Result<Vec<u8>>` | ECDSA sign. Returns DER-encoded signature. |
+| `verify` | `(pubkey, sig, hash) -> Result<bool>` | Static. Verify ECDSA signature. |
+| `ecdh` | `(&self, other: &[u8]) -> Result<[u8; 32]>` | Compute ECDH shared secret |
 
 ### BUTLKeychain Methods
 
-|Method              |Signature                              |Description                           |
-|--------------------|---------------------------------------|--------------------------------------|
-|`new`               |`(seed: [u8; 32]) → Self`              |Create from 32-byte master seed       |
-|`next_keypair`      |`(&mut self) → Result<&BUTLKeypair>`   |Generate next keypair in chain        |
-|`current`           |`(&self) → Option<&BUTLKeypair>`       |Current keypair                       |
-|`previous`          |`(&self) → Option<&BUTLKeypair>`       |Previous keypair (for chain proof)    |
-|`previous_address`  |`(&self) → String`                     |Previous address (for BUTL-PrevAddr)  |
-|`create_chain_proof`|`(&self, addr: &str) → Result<Vec<u8>>`|Sign current address with previous key|
-|`thread_id`         |`(&self) → String`                     |SHA-256 hex of first address          |
-|`seq_num`           |`(&self) → u32`                        |Current sequence number (0-indexed)   |
-|`history`           |`(&self) → &[String]`                  |All addresses generated               |
+| Method | Signature | Description |
+|--------|-----------|-------------|
+| `new` | `(seed: [u8; 32]) -> Self` | Create from 32-byte master seed |
+| `next_keypair` | `(&mut self) -> Result<&BUTLKeypair>` | Generate next keypair in chain |
+| `current` | `(&self) -> Option<&BUTLKeypair>` | Current keypair |
+| `previous` | `(&self) -> Option<&BUTLKeypair>` | Previous keypair (for chain proof) |
+| `previous_address` | `(&self) -> String` | Previous address (for BUTL-PrevAddr) |
+| `create_chain_proof` | `(&self, addr: &str) -> Result<Vec<u8>>` | Sign current address with previous key |
+| `thread_id` | `(&self) -> String` | SHA-256 hex of first address |
+| `seq_num` | `(&self) -> u32` | Current sequence number (0-indexed) |
+| `history` | `(&self) -> &[String]` | All addresses generated |
 
 ### BUTLGate Methods
 
-|Method          |Signature                                           |Description                            |
-|----------------|----------------------------------------------------|---------------------------------------|
-|`new`           |`(rx, blockchain, window, pos_config) → Self`       |Create gate with configuration         |
-|`check_header`  |`(&self, header, prev_pk) → GateReport`             |Phase 1: verify header (steps 1-6)     |
-|`accept_payload`|`(&self, header, payload, report) → Option<Vec<u8>>`|Phase 2: verify and decrypt (steps 7-8)|
+| Method | Signature | Description |
+|--------|-----------|-------------|
+| `new` | `(rx, blockchain, window, pos_config) -> Self` | Create gate with configuration |
+| `check_header` | `(&self, header, prev_pk) -> GateReport` | Phase 1: verify header (steps 1-6) |
+| `accept_payload` | `(&self, header, payload, report) -> Option<Vec<u8>>` | Phase 2: verify and decrypt (steps 7-8) |
 
 ### Constants
 
-|Constant          |Value    |Purpose                            |
-|------------------|---------|-----------------------------------|
-|`VERSION`         |`"1.2.0"`|Library version                    |
-|`PROTOCOL_VERSION`|`1`      |BUTL protocol version (wire format)|
+| Constant | Value | Purpose |
+|----------|-------|---------|
+| `VERSION` | `"1.2.0"` | Library version |
+| `PROTOCOL_VERSION` | `1` | BUTL protocol version (wire format) |
 
------
+---
 
 ## File Structure
 
 ```
 rust/
-├── butl_v12.rs      Reference implementation (copy to src/main.rs)
-├── Cargo.toml       Cargo dependencies (copy to project root)
-└── README.md        This document
+|-- butl_v12.rs      Reference implementation (copy to src/main.rs)
+|-- Cargo.toml       Cargo dependencies (copy to project root)
++-- README.md        This document
 ```
 
 For the initial release, `butl_v12.rs` is a single file containing the full implementation and a demo `main()` function. Copy it to `src/main.rs` in any Cargo project.
@@ -430,12 +430,12 @@ For the initial release, `butl_v12.rs` is a single file containing the full impl
 For production deployment as a crate (planned for v1.3):
 
 ```bash
-cargo add butl       # Not yet available — planned for crates.io
+cargo add butl       # Not yet available - planned for crates.io
 ```
 
 At that point, the library will be structured as a proper crate with `lib.rs`, separate modules, and the demo moved to `examples/`.
 
------
+---
 
 ## Integration Examples
 
@@ -456,7 +456,7 @@ let msg = signer.sign_and_encrypt(
     &server_address,
 ).unwrap();
 
-// Server verifies — if gate passes, the user is authenticated
+// Server verifies - if gate passes, the user is authenticated
 let mut report = gate.check_header(&msg.header, None);
 if report.gate_passed() {
     if let Some(_pt) = gate.accept_payload(
@@ -464,7 +464,7 @@ if report.gate_passed() {
     ) {
         if report.fully_verified() {
             let user = &msg.header.sender;
-            // Authenticated as user — no password needed
+            // Authenticated as user - no password needed
         }
     }
 }
@@ -517,7 +517,7 @@ if report.gate_passed() {
 }
 ```
 
------
+---
 
 ## Rust-Specific Notes
 
@@ -555,7 +555,7 @@ let mut signer = BUTLSigner::new(keychain, MempoolBlockchain::new());
 
 ### Clone and Ownership
 
-`BUTLKeypair` implements `Clone`. When you need to retain a keypair reference across operations (e.g., saving the sender’s pubkey from message 1 to verify message 2’s chain proof), clone the relevant data:
+`BUTLKeypair` implements `Clone`. When you need to retain a keypair reference across operations (e.g., saving the sender's pubkey from message 1 to verify message 2's chain proof), clone the relevant data:
 
 ```rust
 let s1pk = hex::decode(&msg1.header.sender_pubkey).unwrap();
@@ -576,18 +576,18 @@ let parsed: BUTLHeader = serde_json::from_str(&json).unwrap();
 let bytes = rmp_serde::to_vec(&header).unwrap();
 let parsed: BUTLHeader = rmp_serde::from_slice(&bytes).unwrap();
 
-// CBOR, TOML, YAML — any serde format works
+// CBOR, TOML, YAML - any serde format works
 ```
 
 ### Memory Safety
 
-Rust’s ownership model prevents many classes of memory bugs, but private key handling still requires care:
+Rust's ownership model prevents many classes of memory bugs, but private key handling still requires care:
 
-- Private keys exist as `SecretKey` inside `BUTLKeypair`. When the keypair is dropped, Rust’s `Drop` implementation for `SecretKey` zeros the memory.
+- Private keys exist as `SecretKey` inside `BUTLKeypair`. When the keypair is dropped, Rust's `Drop` implementation for `SecretKey` zeros the memory.
 - For explicit zeroing before drop, use the `zeroize` crate (add `zeroize = "1.7"` to Cargo.toml).
-- Never convert private keys to `String` — strings may be copied, logged, or interned by the runtime.
+- Never convert private keys to `String` - strings may be copied, logged, or interned by the runtime.
 
------
+---
 
 ## Security Notes
 
@@ -597,11 +597,11 @@ Rust’s ownership model prevents many classes of memory bugs, but private key h
 - **Key storage.** This library does not handle key storage. Private keys must be encrypted at rest. See [KEY_IS_IDENTITY_WARNING.md](../KEY_IS_IDENTITY_WARNING.md).
 - **No unsafe code.** The implementation uses no `unsafe` blocks (the `secp256k1` crate uses `unsafe` internally for FFI, but that is outside this codebase).
 
------
+---
 
 ## Troubleshooting
 
-### “error: linker `cc` not found”
+### "error: linker `cc` not found"
 
 The `secp256k1` crate requires a C compiler to build libsecp256k1. Install one:
 
@@ -616,11 +616,11 @@ sudo apt install build-essential
 sudo dnf install gcc
 ```
 
-### “error[E0433]: failed to resolve: use of undeclared crate”
+### "error[E0433]: failed to resolve: use of undeclared crate"
 
 Dependencies are missing from `Cargo.toml`. Make sure all 10 crates are listed in `[dependencies]`. Run `cargo build` again after updating.
 
-### “secp256k1: secret key must be 32 bytes”
+### "secp256k1: secret key must be 32 bytes"
 
 The input to `BUTLKeypair::from_secret()` must be exactly 32 bytes. Use `sha256()` to derive a 32-byte key from any seed:
 
@@ -628,24 +628,24 @@ The input to `BUTLKeypair::from_secret()` must be exactly 32 bytes. Use `sha256(
 let kp = BUTLKeypair::from_secret(&sha256(b"my-seed")).unwrap();
 ```
 
-### “GCM auth failed — tampered or wrong key”
+### "GCM auth failed - tampered or wrong key"
 
-The ECDH shared secret doesn’t match. This is expected when the wrong receiver tries to decrypt (different private key = different shared secret), the payload was modified in transit, or the AAD doesn’t match (addresses changed between signing and verification).
+The ECDH shared secret doesn't match. This is expected when the wrong receiver tries to decrypt (different private key = different shared secret), the payload was modified in transit, or the AAD doesn't match (addresses changed between signing and verification).
 
------
+---
 
 ## Related Documents
 
-|Document                                                                          |Description                                    |
-|----------------------------------------------------------------------------------|-----------------------------------------------|
-|[BUTL_Protocol_Specification_v1.2.md](../spec/BUTL_Protocol_Specification_v1.2.md)|Complete protocol specification                |
-|[HEADER_REGISTRY.md](../spec/HEADER_REGISTRY.md)                                  |All BUTL header fields defined                 |
-|[TEST_VECTORS.md](../spec/TEST_VECTORS.md)                                        |Deterministic test cases for interoperability  |
-|[KEY_IS_IDENTITY_WARNING.md](../KEY_IS_IDENTITY_WARNING.md)                       |Critical key safety information                |
-|[butl_mvp_v12.py](../mvp/butl_mvp_v12.py)                                         |Zero-dependency Python MVP proving all 8 claims|
-|[butl_v12.py](../python/butl_v12.py)                                              |Python reference implementation                |
-|[SECURITY.md](../SECURITY.md)                                                     |Security policy and known limitations          |
+| Document | Description |
+|----------|-------------|
+| [BUTL_Protocol_Specification_v1.2.md](../spec/BUTL_Protocol_Specification_v1.2.md) | Complete protocol specification |
+| [HEADER_REGISTRY.md](../spec/HEADER_REGISTRY.md) | All BUTL header fields defined |
+| [TEST_VECTORS.md](../spec/TEST_VECTORS.md) | Deterministic test cases for interoperability |
+| [KEY_IS_IDENTITY_WARNING.md](../KEY_IS_IDENTITY_WARNING.md) | Critical key safety information |
+| [butl_mvp_v12.py](../mvp/butl_mvp_v12.py) | Zero-dependency Python MVP proving all 8 claims |
+| [butl_v12.py](../python/butl_v12.py) | Python reference implementation |
+| [SECURITY.md](../SECURITY.md) | Security policy and known limitations |
 
------
+---
 
 *One file. Ten crates. Real secp256k1. Eight-step verified trust. Get started in under 15 minutes.*
