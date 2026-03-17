@@ -1,11 +1,8 @@
-# ══════════════════════════════════════════════
+# ==============================================
+# BUTL Protocol - .gitignore
+# ==============================================
 
-# BUTL Protocol — .gitignore
-
-# ══════════════════════════════════════════════
-
-# ── Secrets (NEVER commit private keys) ──
-
+# -- Secrets (NEVER commit private keys) --
 *.key
 *.pem
 *.secret
@@ -17,13 +14,11 @@ chain_state.json
 seed_phrase.txt
 *.seed
 
-# ── BUTL local data ──
-
+# -- BUTL local data --
 .butl/
 
-# ── Python ──
-
-**pycache**/
+# -- Python --
+__pycache__/
 *.py[cod]
 *$py.class
 *.so
@@ -47,14 +42,12 @@ htmlcov/
 .mypy_cache/
 .ruff_cache/
 
-# ── Rust ──
-
+# -- Rust --
 target/
 Cargo.lock
 **/*.rs.bk
 
-# ── Node / JavaScript (future implementations) ──
-
+# -- Node / JavaScript (future implementations) --
 node_modules/
 npm-debug.log*
 yarn-debug.log*
@@ -62,8 +55,7 @@ yarn-error.log*
 package-lock.json
 .npm/
 
-# ── OS generated ──
-
+# -- OS generated --
 .DS_Store
 .DS_Store?
 ._*
@@ -74,8 +66,7 @@ ehthumbs.db
 Desktop.ini
 $RECYCLE.BIN/
 
-# ── IDE and editors ──
-
+# -- IDE and editors --
 .vscode/
 .idea/
 *.swp
@@ -88,23 +79,21 @@ $RECYCLE.BIN/
 .classpath
 .settings/
 
-# ── Logs ──
-
+# -- Logs --
 *.log
 logs/
 
-# ── Temporary files ──
-
+# -- Temporary files --
 *.tmp
 *.temp
 *.bak
 *.orig
 /tmp/
 
-# ── Archives (don’t commit build artifacts) ──
-
+# -- Archives (don't commit build artifacts) --
 *.zip
 *.tar.gz
 *.tar.bz2
 *.7z
-*.rar.DS_Store git add .gitignore
+*.rar
+.DS_Store
