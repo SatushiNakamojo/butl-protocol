@@ -136,7 +136,7 @@ The following dates and artifacts establish prior art for the BUTL protocol. Any
 
 |Record                        |Date                  |Location                  |
 |------------------------------|----------------------|--------------------------|
-|Initial commit                |[DATE OF FIRST COMMIT]|GitHub commit hash: [HASH]|
+|Initial commit                |2026 03 16            |GitHub commit hash: c54a2035516968746dd53870b74d857bcc24c3b6|
 |GitHub release v1.2.0         |2026 03 16            |https://github.com/satushinakamojo/butl-protocol|
 |Internet Archive snapshot     |2026 03 16            |https://web.archive.org/web/20260316100403/https://github.com/SatushiNakamojo/butl-protocol|
 |Bitcoin blockchain timestamp  |[DATE, if applicable] |Transaction ID: [TXID]    |
